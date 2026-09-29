@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; img-src 'self' data: blob: http: https:; style-src 'self' 'unsafe-inline'; script-src 'self'"
+    />
+    <title>DeepSeek 浏览器</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- 图标精灵 -->
+    <svg class="sprite" aria-hidden="true">
+      <symbol id="i-back" viewBox="0 0 24 24">
+        <path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </symbol>
+      <symbol id="i-forward" viewBox="0 0 24 24">
+        <path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </symbol>
+      <symbol id="i-reload" viewBox="0 0 24 24">
+        <path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v4.2h-4.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </symbol>
+      <symbol id="i-stop" viewBox="0 0 24 24">
+        <path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+      </symbol>
+      <symbol id="i-home" viewBox="0 0 24 24">
+        <path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+      </symbol>
+      <symbol id="i-globe" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7" />
+        <path d="M3.5 9.5h17M3.5 14.5h17M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18" fill="none" stroke="currentColor" stroke-width="1.4" />
+      </symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24">
+        <rect x="5" y="10.5" width="14" height="10" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.8" />
+        <path d="M8.2 10.5V8a3.8 3.8 0 0 1 7.6 0v2.5" fill="none" stroke="currentColor" stroke-width="1.8" />
+      </symbol>
+      <symbol id="i-external" viewBox="0 0 24 24">
+        <path d="M14 4h6v6M20 4l-8.5 8.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M18 14.5V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h4.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" />
+      </symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24">
+        <path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+      </symbol>
+      <symbol id="i-close" viewBox="0 0 24 24">
+        <path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" />
+      </symbol>
+      <symbol id="i-min" viewBox="0 0 24 24">
+        <path d="M6 12h12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+      </symbol>
+      <symbol id="i-max" viewBox="0 0 24 24">
+        <rect x="6.5" y="6.5" width="11" height="11" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.5" />
+      </symbol>
+      <symbol id="i-restore" viewBox="0 0 24 24">
+        <rect x="4.5" y="8" width="9.5" height="9.5" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.5" />
+        <path d="M8.5 8V6.4A1.4 1.4 0 0 1 9.9 5h8.2a1.4 1.4 0 0 1 1.4 1.4v8.2a1.4 1.4 0 0 1-1.4 1.4H17" fill="none" stroke="currentColor" stroke-width="1.5" />
+      </symbol>
+    </svg>
+
+    <!-- 浏览器外壳 UI（Chromium 内核渲染的内容区由主进程贴在下方） -->
+    <header id="chrome">
+      <div id="titlebar">
+        <div id="tabs" class="tabs"></div>
+        <button id="new-tab" class="icon-btn" title="新建标签页 (Ctrl+T)" aria-label="新建标签页">
+          <svg class="icon"><use href="#i-plus" /></svg>
+        </button>
+        <div class="drag-fill"></div>
+        <div id="window-controls">
+          <button id="win-min" class="win-btn" title="最小化" aria-label="最小化">
+            <svg class="icon"><use href="#i-min" /></svg>
+          </button>
+          <button id="win-max" class="win-btn" title="最大化" aria-label="最大化">
+            <svg class="icon"><use href="#i-max" /></svg>
+          </button>
+          <button id="win-close" class="win-btn danger" title="关闭" aria-label="关闭">
+            <svg class="icon"><use href="#i-close" /></svg>
+          </button>
+        </div>
+      </div>
+
+      <div id="toolbar">
+        <button id="btn-back" class="tool-btn" title="后退 (Alt+←)" aria-label="后退">
+          <svg class="icon"><use href="#i-back" /></svg>
+        </button>
+        <button id="btn-forward" class="tool-btn" title="前进 (Alt+→)" aria-label="前进">
+          <svg class="icon"><use href="#i-forward" /></svg>
+        </button>
+        <button id="btn-reload" class="tool-btn" title="刷新 (Ctrl+R)" aria-label="刷新">
+          <svg class="icon"><use href="#i-reload" /></svg>
+        </button>
+        <button id="btn-home" class="tool-btn" title="打开 DeepSeek 对话首页" aria-label="首页">
+          <svg class="icon"><use href="#i-home" /></svg>
+        </button>
+
+        <form id="address-form" class="address-bar" autocomplete="off">
+          <span id="scheme-icon" class="scheme-icon">
+            <svg class="icon"><use href="#i-globe" /></svg>
+          </span>
+          <input
+            id="address"
+            type="text"
+            spellcheck="false"
+            placeholder="搜索或输入网址，回车访问"
+            aria-label="地址栏"
+          />
+        </form>
+
+        <button id="btn-external" class="tool-btn" title="用系统默认浏览器打开当前页面" aria-label="外部打开">
+          <svg class="icon"><use href="#i-external" /></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- 内容区占位：实际页面由 Chromium WebContentsView 覆盖其上 -->
+    <main id="stage"></main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

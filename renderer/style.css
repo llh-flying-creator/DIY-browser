@@ -1,0 +1,402 @@
+:root {
+  color-scheme: dark;
+
+  --titlebar-h: 40px;
+  --toolbar-h: 48px;
+
+  /* 熔岩深色主题色板 */
+  --accent: #6b86ff;
+  --accent-soft: rgba(107, 134, 255, 0.22);
+  --text: #e9edf5;
+  --text-dim: #939db0;
+  --text-mute: #6f7889;
+
+  --chrome-top: #202329;
+  --chrome-bottom: #1a1d22;
+  --surface: #2a2e36;
+  --surface-hi: #333844;
+  --field: #24282f;
+  --deep: #101216;
+  --line: rgba(255, 255, 255, 0.07);
+  --line-strong: rgba(255, 255, 255, 0.12);
+  --hover: rgba(255, 255, 255, 0.07);
+  --press: rgba(255, 255, 255, 0.11);
+
+  --radius: 9px;
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --font: "Segoe UI", "Microsoft YaHei UI", "Microsoft YaHei", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font);
+  color: var(--text);
+  background: var(--deep);
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: rgba(107, 134, 255, 0.38);
+}
+
+.sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ------------------------------ 外壳整体 ------------------------------ */
+
+#chrome {
+  position: relative;
+  background: linear-gradient(180deg, var(--chrome-top) 0%, var(--chrome-bottom) 100%);
+  border-bottom: 1px solid var(--line);
+  z-index: 2;
+}
+
+#stage {
+  position: absolute;
+  inset: calc(var(--titlebar-h) + var(--toolbar-h)) 0 0 0;
+  background: var(--deep);
+  z-index: 0;
+}
+
+/* 外壳（标签栏 / 工具栏）始终立即可用，不参与启动动画，保证"秒启动"体感 */
+
+/* ------------------------------ 标题栏 / 标签栏 ------------------------------ */
+
+#titlebar {
+  height: var(--titlebar-h);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 0 0 8px;
+  -webkit-app-region: drag;
+}
+
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  -webkit-app-region: no-drag;
+}
+
+.drag-fill {
+  flex: 1 1 24px;
+  min-width: 12px;
+  height: 100%;
+  -webkit-app-region: drag;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 30px;
+  padding: 0 6px 0 10px;
+  flex: 1 1 0;
+  min-width: 68px;
+  max-width: 220px;
+  border-radius: var(--radius);
+  color: var(--text-dim);
+  font-size: 12.5px;
+  cursor: default;
+  transition: background-color 0.16s ease, color 0.16s ease;
+  -webkit-app-region: no-drag;
+}
+
+.tab:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+.tab.active {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 2px 8px rgba(0, 0, 0, 0.35);
+  animation: tab-in 0.22s var(--ease-out);
+}
+
+@keyframes tab-in {
+  from {
+    transform: scale(0.965);
+    opacity: 0.7;
+  }
+}
+
+.tab-icon {
+  position: relative;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  display: grid;
+  place-items: center;
+  border-radius: 4px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 16px 16px;
+  color: var(--text-mute);
+}
+
+.tab-icon .globe {
+  width: 15px;
+  height: 15px;
+}
+
+.tab-icon.loading .globe {
+  display: none;
+}
+
+.tab-icon.loading::after {
+  content: "";
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1.7px solid var(--accent-soft);
+  border-top-color: var(--accent);
+  animation: spin 0.7s linear infinite;
+}
+
+.tab-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.tab-close {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-mute);
+  cursor: default;
+  opacity: 0;
+  transition: opacity 0.14s ease, background-color 0.14s ease, color 0.14s ease;
+}
+
+.tab-close .icon {
+  width: 14px;
+  height: 14px;
+}
+
+.tab:hover .tab-close,
+.tab.active .tab-close {
+  opacity: 1;
+}
+
+.tab-close:hover {
+  background: var(--press);
+  color: var(--text);
+}
+
+/* 新建标签按钮 */
+.icon-btn {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  margin-left: 4px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-dim);
+  cursor: default;
+  -webkit-app-region: no-drag;
+  transition: background-color 0.16s ease, color 0.16s ease;
+}
+
+.icon-btn:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+/* ------------------------------ 窗口控制 ------------------------------ */
+
+#window-controls {
+  display: flex;
+  align-self: stretch;
+  -webkit-app-region: no-drag;
+}
+
+.win-btn {
+  width: 46px;
+  height: var(--titlebar-h);
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: #aab3c4;
+  cursor: default;
+  transition: background-color 0.16s ease, color 0.16s ease;
+}
+
+.win-btn .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.win-btn:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+.win-btn.danger:hover {
+  background: #e81123;
+  color: #ffffff;
+}
+
+/* ------------------------------ 工具栏 ------------------------------ */
+
+#toolbar {
+  height: var(--toolbar-h);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 10px 6px 10px;
+  -webkit-app-region: drag;
+}
+
+.tool-btn {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #b6bfd0;
+  cursor: default;
+  -webkit-app-region: no-drag;
+  transition: background-color 0.16s ease, color 0.16s ease, transform 0.16s var(--ease-out);
+}
+
+.tool-btn:hover:not(:disabled) {
+  background: var(--hover);
+  color: #ffffff;
+  transform: scale(1.06);
+}
+
+.tool-btn:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.tool-btn:disabled {
+  color: var(--text-mute);
+  opacity: 0.4;
+}
+
+.address-bar {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 6px;
+  padding: 0 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--field);
+  -webkit-app-region: no-drag;
+  transition: border-color 0.18s ease, box-shadow 0.24s ease, background-color 0.18s ease;
+}
+
+.address-bar:hover {
+  background: #262b33;
+}
+
+.address-bar:focus-within {
+  background: #23272e;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.scheme-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  color: var(--text-mute);
+  transition: color 0.18s ease;
+}
+
+.scheme-icon .icon {
+  width: 15px;
+  height: 15px;
+}
+
+.scheme-icon.secure {
+  color: #46d98a;
+}
+
+/* 地址栏内的加载指示 */
+.spinner {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 1.8px solid var(--accent-soft);
+  border-top-color: var(--accent);
+  animation: spin 0.7s linear infinite;
+}
+
+#address {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 13.5px;
+  color: var(--text);
+  caret-color: var(--accent);
+  user-select: text;
+}
+
+#address::placeholder {
+  color: var(--text-mute);
+}
+
+/* ------------------------------ 无障碍：减少动效 ------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

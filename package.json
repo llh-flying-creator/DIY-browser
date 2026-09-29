@@ -1,0 +1,24 @@
+{
+  "name": "deepseek-browser",
+  "productName": "DeepSeek 浏览器",
+  "version": "1.0.0",
+  "description": "基于 Chromium 内核（Electron）的极简浏览器：秒开 DeepSeek 对话官网",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "icon": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/make-icon.ps1",
+    "shortcut": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/create-shortcut.ps1"
+  },
+  "keywords": [
+    "chromium",
+    "electron",
+    "browser",
+    "deepseek"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^33.2.1"
+  }
+}
